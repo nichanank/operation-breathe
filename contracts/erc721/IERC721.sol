@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../erc/erc165/IERC165.sol";
+import "../erc165/IERC165.sol";
 
 /**
  * @title ERC721 Non-Fungible Token Standard basic interface
