@@ -5,7 +5,7 @@
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
-
+  contracts_build_directory: path.join(__dirname, 'client/src/contracts'),
   networks: {
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
