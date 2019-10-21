@@ -9,6 +9,10 @@ The adaptor currently supports `lat` and `lon` as parameters. The absence of the
 ### Install dependencies
 `npm install`
 
+### Run
+`npm run server`
+The app should now be live on `localhost:80`
+
 ### Test
 `npm test`
 

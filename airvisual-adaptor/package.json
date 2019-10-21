@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/_mocha --timeout 0"
+    "test": "./node_modules/.bin/_mocha --timeout 0",
+    "server": "nodemon app.js"
   },
   "author": {
     "name": "Nichanan Kesonpat",
@@ -19,6 +20,7 @@
     "mocha": "^6.2.2"
   },
   "dependencies": {
+    "nodemon": "^1.19.4",
     "request": "^2.88.0"
   }
 }
