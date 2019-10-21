@@ -8,8 +8,8 @@ const createRequest = (input, callback) => {
 	url = url + endpoint
 
 	// Create request params"",
-  const lat = input.data.lat || "34.0669" // Default to latitude of Los Angeles
-  const lon = input.data.lon || "-118.2417" // Default to longitude of Los Angeles
+  const lat = input.data.lat || "" // Default to latitude of Los Angeles
+  const lon = input.data.lon || "" // Default to longitude of Los Angeles
 
 	// Build your query object with the given input params, for example:
 	let queryObj = {

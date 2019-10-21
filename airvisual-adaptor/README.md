@@ -8,7 +8,7 @@ This adaptor allows nodes to support the [AirVisual API](https://www.airvisual.c
 `npm install`
 
 ### Test
-`npm run test`
+`npm test`
 
 ### Create Zip
 `zip -r airvisual-ea.zip`
