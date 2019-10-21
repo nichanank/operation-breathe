@@ -5,13 +5,14 @@
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, 'client/src/contracts'),
+//  contracts_build_directory: path.join(__dirname, 'client/src/contracts'),
   networks: {
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+
     ropsten: {
       provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/YOUR-PROJECT-ID`),
       network_id: 3,       // Ropsten's id
@@ -19,6 +20,16 @@ module.exports = {
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+
+    live: {
+      provider: () => {
+        return new HDWalletProvider(process.env.MNEMONIC, process.env.RPC_URL)
+      },
+      network_id: '*',
+      // Necessary due to https://github.com/trufflesuite/truffle/issues/1971
+      // Should be fixed in Truffle 5.0.17
+      skipDryRun: true,
     },
 
     // Useful for private networks
@@ -37,7 +48,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      // version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.4.24",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
