@@ -2,6 +2,8 @@
 
 This adaptor allows nodes to support the [AirVisual API](https://www.airvisual.com/air-pollution-data-api). This was built using the [Chainlink NodeJS Template](https://github.com/thodges-gh/CL-EA-NodeJS-Template).
 
+The adaptor currently supports `lat` and `lon` as parameters. The absence of these parameters will yield the air quality data for the nearest city.
+
 ## Setup
 
 ### Install dependencies
