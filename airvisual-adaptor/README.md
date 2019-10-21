@@ -11,7 +11,7 @@ The adaptor currently supports `lat` and `lon` as parameters. The absence of the
 
 ### Run
 `npm run server`
-The app should now be live on `localhost:80`
+The app should now be live on `localhost:8080`
 
 ### Test
 `npm test`
