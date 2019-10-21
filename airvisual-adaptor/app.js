@@ -1,0 +1,18 @@
+const express = require("express")
+const bodyParser = require("body-parser")
+const app = express()
+
+const createRequest = require("./index").createRequest
+const port = process.env.PORT || 80
+
+app.use(bodyParser.json())
+
+app.post("/", (req, res) => {
+	console.log("POST Data: ", req.body)
+	createRequest(req.body, (status, result) => {
+		console.log("Result: ", result)
+		res.status(status).json(result)
+	})
+})
+
+app.listen(port, () => console.log(`Listening on port ${port}!`))

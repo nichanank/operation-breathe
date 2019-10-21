@@ -1,0 +1,24 @@
+{
+  "name": "airvisual-adaptor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/_mocha --timeout 0"
+  },
+  "author": {
+    "name": "Nichanan Kesonpat",
+    "email": "nich@nichanank.com",
+    "url": "https://github.com/nichanank"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "express": "^4.17.1",
+    "mocha": "^6.2.2"
+  },
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
