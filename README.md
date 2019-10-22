@@ -4,6 +4,17 @@ A project to unite Earth's citizens to create a more sustainable planet.
 
 ### Development
 
+To use external adapters we'll have to run our chainlink node. 
+Follow these instructions: https://docs.fiews.io/docs/run-a-chainlink-node-from-scratch
+Follow this to request data from your own node. (Deploy your own oracle and then add it to your node). Remember to send some ETH to your own node too because it will need some to send response.
+
+Use external adapters with your own node. https://docs.chain.link/docs/node-operators
+Run server locally for adapter and then add the url on bridge like this https://ibb.co/K0fWBzR
+
+Add jobs and then view their runs by running `request-data.js`
+
+
+
 ### Testing
 
 For deploying to live networks, Truffle will use `truffle-hdwallet-provider` for your mnemonic and an RPC URL. Set your environment variables `$RPC_URL` and `$MNEMONIC` before running:
