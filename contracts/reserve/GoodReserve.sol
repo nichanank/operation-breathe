@@ -1,9 +1,9 @@
 pragma solidity >=0.4.21 <0.6.0;
 
 import "node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "contracts/erc20/ERC20.sol";
-import "contracts/erc20/ERC20Detailed.sol";
+import "../utils/SafeMath.sol";
+import "../erc20/ERC20.sol";
+import "../erc20/ERC20Detailed.sol";
 
 import "./BancorBondingCurve.sol";
 import "./ValidGasPrice.sol";

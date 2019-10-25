@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.4.21 <0.6.0;
 
 /**
  * @title ERC721 token receiver interface
@@ -20,6 +20,6 @@ interface IERC721Receiver {
      * @param data Additional data with no specified format
      * @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
      */
-    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data)
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes data)
     external returns (bytes4);
 }

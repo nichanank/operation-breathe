@@ -1,6 +1,6 @@
 pragma solidity >=0.4.21 <0.6.0;
 
-import "node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "../utils/SafeMath.sol";
 import "./Power.sol"; // Efficient power function.
 
 /**
