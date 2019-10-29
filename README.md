@@ -13,6 +13,10 @@ Run server locally for adapter and then add the url on bridge like this https://
 
 Add jobs and then view their runs by running `request-data.js`
 
+* Run chainlink node locally
+* Run adapter locally and give that url to bridge like `ipaddress:port`, before running set the following env variables `AIRVISUAL_API_KEY`
+* Before running scripts, set env variables like `MNEMONIC` and `RPC_URL` like this `export RPC_URL="https://ropsten.rpc.fiews.io/v1/free"`
+
 
 
 ### Testing
