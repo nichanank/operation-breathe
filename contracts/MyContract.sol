@@ -11,7 +11,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  */
 contract MyContract is ChainlinkClient, Ownable {
   uint256 public data;
-
+  event Data(uint256 data, bytes32 requestId);
   /**
    * @notice Deploy the contract with a specified address for the LINK
    * and Oracle contract addresses
@@ -59,7 +59,7 @@ contract MyContract is ChainlinkClient, Ownable {
   {
     Chainlink.Request memory req = buildChainlinkRequest(_jobId, this, this.fulfill.selector);
     req.add("url", _url);
-    req.add("path", _path);
+    req.add("copyPath", _path);
     req.addInt("times", _times);
     requestId = sendChainlinkRequestTo(_oracle, req, _payment);
   }
@@ -76,6 +76,8 @@ contract MyContract is ChainlinkClient, Ownable {
     recordChainlinkFulfillment(_requestId)
   {
     data = _data;
+    emit Data(data, _requestId);
+    
   }
 
   /**
