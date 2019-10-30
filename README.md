@@ -2,7 +2,7 @@
 
 A project to unite Earth's citizens to create a more sustainable planet.
 
-### Development
+## Development
 
 To use external adapters we'll have to run our chainlink node. https://docs.chain.link/docs/node-operators
 
@@ -30,7 +30,7 @@ Add jobs and then view their runs by running `request-data.js`
 2. Deploy your contract using `npm run migrate:live` and fund your contract with LINK https://ropsten.chain.link (for ropsten)
 2. Run helper scripts (see below)
 
-### Testing
+## Testing
 
 For deploying to live networks, Truffle will use `truffle-hdwallet-provider` for your mnemonic and an RPC URL. Set your environment variables `$RPC_URL` and `$MNEMONIC` before running:
 
