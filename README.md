@@ -4,20 +4,31 @@ A project to unite Earth's citizens to create a more sustainable planet.
 
 ### Development
 
-To use external adapters we'll have to run our chainlink node. 
-Follow these instructions: https://docs.fiews.io/docs/run-a-chainlink-node-from-scratch
-Follow this to request data from your own node. (Deploy your own oracle and then add it to your node). Remember to send some ETH to your own node too because it will need some to send response.
-
-Use external adapters with your own node. https://docs.chain.link/docs/node-operators
-Run server locally for adapter and then add the url on bridge like this https://ibb.co/K0fWBzR
+To use external adapters we'll have to run our chainlink node. https://docs.chain.link/docs/node-operators
 
 Add jobs and then view their runs by running `request-data.js`
 
-* Run chainlink node locally
-* Run adapter locally and give that url to bridge like `ipaddress:port`, before running set the following env variables `AIRVISUAL_API_KEY`
-* Before running scripts, set env variables like `MNEMONIC` and `RPC_URL` like this `export RPC_URL="https://ropsten.rpc.fiews.io/v1/free"`
+#### 1. Have a chainlink node running
 
+1. Start a local chainlink node. Instructions here https://docs.fiews.io/docs/run-a-chainlink-node-from-scratch
+2. Send ETH to your node on the network you plan on using, it will need some gas money to send a response
 
+#### 2. Run your adaptor locally
+
+1. Set your `AIRVISUAL_API_KEY` as an env variable
+1. Have the external adaptor(s) running locally
+2. On your node operator dashboard go to `Bridges` --> `Add Bridge` and fill in the details. For the bridge url use `[YOUR_IP_ADDRESS]:port` where your adaptor is running. Be sure to use your ip address and not `localhost`
+
+#### 3. Add a job
+
+1. Once the bridge is added, create a new job on the dashboard a paste the contents of `job-blob.json` into the json blob space.
+2. Copy the job id and paste it into `scripts/request-data.js`
+
+#### 4. Check your node with provided scripts
+
+1. Set env variables `MNEMONIC` and `RPC_URL` like so: `export RPC_URL="https://ropsten.rpc.fiews.io/v1/free"` and `export MNEMONIC='[YOUR MNEMONIC]`
+2. Deploy your contract using `npm run migrate:live` and fund your contract with LINK https://ropsten.chain.link (for ropsten)
+2. Run helper scripts (see below)
 
 ### Testing
 
