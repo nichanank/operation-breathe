@@ -2,7 +2,6 @@ pragma solidity 0.4.24;
 
 import "chainlink/contracts/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-// import "./reserve/ContinuousToken.sol";
 
 /**
  * @title MyContract is an example contract which requests data from
@@ -108,8 +107,7 @@ contract MyContract is ChainlinkClient, Ownable {
   function redeem() public {
     require(redeemPhase == true, "You cannot redeem now");
     if (scores[msg.sender] != 0){
-      // uint256 amount = scores[msg.sender] * tokenContract.totalSupply();
-      uint amount = 1; // should delete this and uncomment the above once tokenContract is ready.
+      uint256 amount = scores[msg.sender] * tokenContract.totalSupply();
       amount = amount / totalScore;
       // call on tokenContract to transfer that much tokens like tokenContract.transfer(msg.sender, amount);
       scores[msg.sender] = 0;
@@ -235,4 +233,5 @@ contract MyContract is ChainlinkClient, Ownable {
 
 contract ContinuousToken {
   function distribute(address user, uint score, uint totalScore) public returns (uint256);
+  function totalSupply() public view returns (uint256);
 }
