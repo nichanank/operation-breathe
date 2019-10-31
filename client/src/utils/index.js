@@ -1,10 +1,15 @@
 import { ethers } from 'ethers'
-import contracts from '../contracts'
+import MY_CONTRACT_ABI from '../constants/abis/MyContract'
+import { MY_CONTRACT_ADDRESS } from '../constants/'
 import UncheckedJsonRpcSigner from './signer'
 
 export function getQueryParam(windowLocation, name) {
   var q = windowLocation.search.match(new RegExp('[?&]' + name + '=([^&#?]*)'))
   return q && q[1]
+}
+
+export function convertEpochToDatetime(epoch) {
+  return new Date(epoch * 1000)
 }
 
 export async function getEvents(library, filter) {
@@ -35,6 +40,12 @@ export async function getIsAdmin(library, address) {
   }
   var admin = await getContract(library, "MyContract").owner()
   return admin === address
+}
+
+// get the whether a given address is an admin
+export async function getLatestOracleCall(library) {
+  var timestamp = await getContract(library, "MyContract").latestCallToOracle()
+  return timestamp
 }
 
 export async function getIsManager(library, id, address) {
@@ -93,16 +104,12 @@ export function getProviderOrSigner(library, account) {
 export function getContract(library, contractName, account) {
   switch (contractName) {
     case "MyContract":
-      return new ethers.Contract(contracts.MyContract.address, contracts.MyContract.ABI, getProviderOrSigner(library, account))
+      return new ethers.Contract(MY_CONTRACT_ADDRESS, MY_CONTRACT_ABI, getProviderOrSigner(library, account))
     // case "AccessControl":
     //   return new ethers.Contract(contracts.AccessControl.address, contracts.AccessControl.ABI, getProviderOrSigner(library, account))
     default:
       return null
   }
-}
-
-export function getContractAddress(contractName) {
-  return contracts[contractName].address
 }
 
 export function shortenAddress(address, digits = 4) {
