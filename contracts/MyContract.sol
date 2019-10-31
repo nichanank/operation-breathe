@@ -11,14 +11,24 @@ import "./reserve/ContinuousToken.sol";
  * local test networks
  */
 contract MyContract is ChainlinkClient, Ownable {
+  
   uint256 public data;
-  mapping(address => uint256) public scores;
-  address[] users;
-  enum Status { pending, accepted, rejected }
-
-  uint256 totalClaims;
+  uint256 totalSubmissions;
   uint256 totalScore;
-  bool reedemPhase;
+  bool redeemPhase;
+
+  address[] users;
+
+  ContinuousToken tokenContract;
+
+  mapping(address => uint256) public scores;
+
+  enum Status { 
+    Pending, 
+    Accepted, 
+    Rejected
+  }
+
   struct Multihash {
     bytes32 digest;
     uint8 hashFunction;
@@ -35,8 +45,8 @@ contract MyContract is ChainlinkClient, Ownable {
   Submission[] submissions;
 
   event Data(uint256 data, bytes32 requestId);
-  event ClaimSubmitted(uint256 indexed submissionId, address indexed user, Mutlihash indexed ipfsHash, Status st);
-  event ClaimReviewed(uint256 indexed submissionId, address indexed user, Mutlihash indexed ipfsHash, Status st);
+  event ClaimSubmitted(uint256 indexed submissionId, address indexed user, Multihash indexed ipfsHash, Status status);
+  event ClaimReviewed(uint256 indexed submissionId, address indexed user, Multihash indexed ipfsHash, Status status);
   event RedeemPhase(bool on);
    
   /**
@@ -45,15 +55,16 @@ contract MyContract is ChainlinkClient, Ownable {
    * @dev Sets the storage for the specified addresses
    * @param _link The address of the LINK token contract
    */
-  constructor(address _link, address _token) public {
-    totalClaims = 0;
+  constructor(address _link, ContinuousToken _token) public {
+    totalSubmissions = 0;
     totalScore = 0;
-    reedemPhase = false;
+    redeemPhase = false;
     if (_link == address(0)) {
       setPublicChainlinkToken();
     } else {
       setChainlinkToken(_link);
     }
+    tokenContract = _token;
   }
 
   /**
@@ -66,55 +77,75 @@ contract MyContract is ChainlinkClient, Ownable {
   }
 
   // Submit a claim that you helped with the cause and earn score.
-  function claim(bytes32 digest, uint8 hashFunction, uint8 size) public returns (uint256) {
-    Multihash storage ipfsHash = Multihash(digest, hashFunction, size);
-    submissions[totalClaims] = Submission(totalClaims, msg.sender, ipfsHash, pending);
-    totalClaims = totalClaims + 1;
-    // scores[msg.sender] = scores[msg.sender] + 1;
-    emit ClaimSubmitted(totalClaims - 1, msg.sender, ipfsHash, pending);
-    return totalClaims;
-  }
+  function claim(bytes32 _digest, uint8 _hashFunction, uint8 _size) public returns (uint256) {
+    
+    // create multihash
+    Multihash memory _ipfsHash = Multihash({
+      digest: _digest, 
+      hashFunction: _hashFunction,
+      size: _size
+    });
+    
+    // create new submission
+    Submission memory submission = Submission({
+      submissionId: totalSubmissions,
+      user: msg.sender,
+      ipfsHash: _ipfsHash,
+      status: Status.Pending
+    });
 
-  function reviewSubmission(uint256 submissionId, bool accepted) public onlyOwner {
-    require(submissions[submissionId].status == pending, "Claim has already been taken care of");
-    if (accepted) {
-      submissions[submissionId].status = accepted;
-    }
-    else {
-      submissions[submissionId].status = rejected;
-    }
-    scores[submissions[submissionId].user] = scores[submissions[submissionId].user] + 1;
-    totalScore = totalScore + 1;
-    emit ClaimReviewed(submissionId, msg.sender, ipfsHash, submissions[submissionId].status);
-  }
+    // store new submission
+    submissions[totalSubmissions] = submission;
 
-  function targetAchieved() internal {
-    // transfer tokens to all users
-    reedemPhase = true;
-    emit RedeemPhase(true);
+    totalSubmissions = totalSubmissions + 1;
+
+    emit ClaimSubmitted(totalSubmissions - 1, msg.sender, _ipfsHash, Status.Pending);
+
+    return totalSubmissions;
   }
 
   function redeem() public {
     require(redeemPhase == true, "You cannot redeem now");
     if (scores[msg.sender] != 0){
-      uint256 amount = scores[msg.sender] * totalSupply();
+      uint256 amount = scores[msg.sender] * tokenContract.totalSupply();
       amount = amount / totalScore;
-      // transfer that much tokens
+      // call on tokenContract to transfer that much tokens like tokenContract.transfer(msg.sender, amount);
       scores[msg.sender] = 0;
     }
   }
-  // View your score
-  function getScore() public view returns (uint256) {
-    return scores[msg.sender];
+
+  /**
+   * @notice The fulfill method from requests created by this contract
+   * @dev The recordChainlinkFulfillment protects this function from being called
+   * by anyone other than the oracle address that the request was sent to
+   * @param _requestId The ID that was generated for the request
+   * @param _data The answer provided by the oracle
+   */
+  function fulfill(bytes32 _requestId, uint256 _data)
+    public
+    recordChainlinkFulfillment(_requestId)
+  {
+    data = _data;
+    if (data > 20){
+      _targetAchieved();
+    }
+    emit Data(data, _requestId);
   }
 
-  function getHash(uint submissionId) public view returns (bytes32 digest, uint8 hashFunction, uint8 size) {
-    Multihash storage data = submissions[submissionId].ipfsHash;
-    return (data.digest, data.hashFunction, data.size);
+  function reviewSubmission(uint256 submissionId, bool _accepted) public onlyOwner {
+    require(submissions[submissionId].status == Status.Pending, "Claim has already been taken care of");
+    
+    if (_accepted) {
+      submissions[submissionId].status = Status.Accepted;
+    }
+    else {
+      submissions[submissionId].status = Status.Rejected;
+    }
+    
+    scores[submissions[submissionId].user] = scores[submissions[submissionId].user] + 1;
+    totalScore = totalScore + 1;
+    emit ClaimReviewed(submissionId, msg.sender, submissions[submissionId].ipfsHash, submissions[submissionId].status);
   }
-
-
-
 
   /**
    * @notice Creates a request to the specified Oracle contract address
@@ -146,24 +177,6 @@ contract MyContract is ChainlinkClient, Ownable {
   }
 
   /**
-   * @notice The fulfill method from requests created by this contract
-   * @dev The recordChainlinkFulfillment protects this function from being called
-   * by anyone other than the oracle address that the request was sent to
-   * @param _requestId The ID that was generated for the request
-   * @param _data The answer provided by the oracle
-   */
-  function fulfill(bytes32 _requestId, uint256 _data)
-    public
-    recordChainlinkFulfillment(_requestId)
-  {
-    data = _data;
-    if (data > 20){
-      targetAchieved();
-    }
-    emit Data(data, _requestId);
-  }
-
-  /**
    * @notice Allows the owner to withdraw any LINK balance on the contract
    */
   function withdrawLink() public onlyOwner {
@@ -189,5 +202,21 @@ contract MyContract is ChainlinkClient, Ownable {
     onlyOwner
   {
     cancelChainlinkRequest(_requestId, _payment, _callbackFunctionId, _expiration);
+  }
+
+  function getHash(uint submissionId) public view returns (bytes32 digest, uint8 hashFunction, uint8 size) {
+    Multihash storage data = submissions[submissionId].ipfsHash;
+    return (data.digest, data.hashFunction, data.size);
+  }
+
+  // View your score
+  function getScore() public view returns (uint256) {
+    return scores[msg.sender];
+  }
+
+  function _targetAchieved() internal {
+    // transfer tokens to user
+    redeemPhase = true;
+    emit RedeemPhase(true);
   }
 }
