@@ -2,6 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const h = require('chainlink-test-helpers')
+const bs58 = require('bs58')
 
 contract('MyContract', accounts => {
   const LinkToken = artifacts.require('LinkToken.sol')
@@ -28,6 +29,16 @@ contract('MyContract', accounts => {
   const payment = web3.utils.toWei('1')
 
   let link, oc, cc
+
+  function getBytes32FromMultihash(multihash) {
+    const decoded = bs58.decode(multihash);
+  
+    return {
+      digest: `0x${decoded.slice(2).toString('hex')}`,
+      hashFunction: decoded[0],
+      size: decoded[1],
+    };
+  }
 
   beforeEach(async () => {
     link = await LinkToken.new()
@@ -226,4 +237,14 @@ contract('MyContract', accounts => {
       })
     })
   })
+
+  describe('#claim', () => {
+
+    it('lets a user submit a claim to impact', async () => {
+      const { digest, hashFunction, size } = getBytes32FromMultihash('QmahqCsAUAw7zMv6P6Ae8PjCTck7taQA6FgGQLnWdKG7U8')
+      console.log(digest)
+      var callClaim = await cc.claim(digest, hashFunction, size)
+    })
+  })
+
 })
