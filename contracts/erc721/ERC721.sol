@@ -2,7 +2,7 @@ pragma solidity >=0.4.21 <0.6.0;
 
 import "./IERC721.sol";
 import "./IERC721Receiver.sol";
-import "../utils/SafeMath.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../utils/Address.sol";
 import "../erc165/ERC165.sol";
 

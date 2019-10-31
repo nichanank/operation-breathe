@@ -1,7 +1,7 @@
 pragma solidity >=0.4.21 < 0.6.0;
 
 import "./IERC20.sol";
-import "../utils/SafeMath.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -97,7 +97,8 @@ contract ERC20 is IERC20 {
      */
     function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, msg.sender, SafeMath.sub(_allowances[sender][msg.sender], amount, "ERC20: transfer amount exceeds allowance"));
+        // _approve(sender, msg.sender, SafeMath.sub(_allowances[sender][msg.sender], amount, "ERC20: transfer amount exceeds allowance"));
+        _approve(sender, msg.sender, SafeMath.sub(_allowances[sender][msg.sender], amount));
         return true;
     }
 
@@ -133,7 +134,8 @@ contract ERC20 is IERC20 {
      * `subtractedValue`.
      */
     function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-        _approve(msg.sender, spender, SafeMath.sub(_allowances[msg.sender][spender], subtractedValue, "ERC20: decreased allowance below zero"));
+        // _approve(msg.sender, spender, SafeMath.sub(_allowances[msg.sender][spender], subtractedValue, "ERC20: decreased allowance below zero"));
+        _approve(msg.sender, spender, SafeMath.sub(_allowances[msg.sender][spender], subtractedValue));
         return true;
     }
 
@@ -155,7 +157,8 @@ contract ERC20 is IERC20 {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
-        _balances[sender] = SafeMath.sub(_balances[sender], amount, "ERC20: transfer amount exceeds balance");
+        // _balances[sender] = SafeMath.sub(_balances[sender], amount, "ERC20: transfer amount exceeds balance");
+        _balances[sender] = SafeMath.sub(_balances[sender], amount);
         _balances[recipient] = SafeMath.add(_balances[recipient], amount);
         // emit Transfer(sender, recipient, amount);
     }
@@ -191,7 +194,8 @@ contract ERC20 is IERC20 {
     function _burn(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        _balances[account] = SafeMath.sub(_balances[account], amount, "ERC20: burn amount exceeds balance");
+        // _balances[account] = SafeMath.sub(_balances[account], amount, "ERC20: burn amount exceeds balance");
+        _balances[account] = SafeMath.sub(_balances[account], amount);
         _totalSupply = SafeMath.sub(_totalSupply, amount);
         emit Transfer(account, address(0), amount);
     }
@@ -225,6 +229,7 @@ contract ERC20 is IERC20 {
      */
     function _burnFrom(address account, uint256 amount) internal {
         _burn(account, amount);
-        _approve(account, msg.sender, SafeMath.sub(_allowances[account][msg.sender], amount, "ERC20: burn amount exceeds allowance"));
+        // _approve(account, msg.sender, SafeMath.sub(_allowances[account][msg.sender], amount, "ERC20: burn amount exceeds allowance"));
+        _approve(account, msg.sender, SafeMath.sub(_allowances[account][msg.sender], amount));
     }
 }
