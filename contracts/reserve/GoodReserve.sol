@@ -33,8 +33,8 @@ contract GoodReserve is Ownable, ERC20, ERC20Detailed, BancorBondingCurve, Valid
         require(_deposit > 0, "Deposit must be non-zero.");
 
         uint rewardAmount = getContinuousMintReward(_deposit);
-        _mint(msg.sender, rewardAmount);
-        emit Minted(msg.sender, rewardAmount, _deposit);
+        // _mint(msg.sender, rewardAmount);
+        // emit Minted(msg.sender, rewardAmount, _deposit);
         return rewardAmount;
     }
 

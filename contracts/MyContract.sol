@@ -2,7 +2,7 @@ pragma solidity 0.4.24;
 
 import "chainlink/contracts/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-// import "./reserve/ContinuousToken.sol";
+import "./reserve/ContinuousToken.sol";
 
 /**
  * @title MyContract is an example contract which requests data from
@@ -19,13 +19,13 @@ contract MyContract is ChainlinkClient, Ownable {
 
   address[] users;
 
-  // ContinuousToken tokenContract;
+  ContinuousToken tokenContract;
 
   mapping(address => uint256) public scores;
 
-  enum Status { 
-    Pending, 
-    Accepted, 
+  enum Status {
+    Pending,
+    Accepted,
     Rejected
   }
 
@@ -56,7 +56,7 @@ contract MyContract is ChainlinkClient, Ownable {
    * @param _link The address of the LINK token contract
    */
   // constructor(address _link, ContinuousToken _token) public {
-    constructor(address _link) public { // delete this line and uncomment the above when continuous token is ready
+    constructor(address _link, address _token) public { // delete this line and uncomment the above when continuous token is ready
     totalSubmissions = 0;
     totalScore = 0;
     redeemPhase = false;
@@ -65,7 +65,7 @@ contract MyContract is ChainlinkClient, Ownable {
     } else {
       setChainlinkToken(_link);
     }
-    // tokenContract = _token; uncomment the above when continuous token is ready
+    tokenContract = ContinuousToken(_token);
   }
 
   /**
@@ -82,7 +82,7 @@ contract MyContract is ChainlinkClient, Ownable {
     
     // create multihash
     Multihash memory _ipfsHash = Multihash({
-      digest: _digest, 
+      digest: _digest,
       hashFunction: _hashFunction,
       size: _size
     });
@@ -220,5 +220,15 @@ contract MyContract is ChainlinkClient, Ownable {
     // transfer tokens to user
     redeemPhase = true;
     emit RedeemPhase(true);
+
+    for (uint256 i = 0; i < totalSubmissions; i++){
+      uint256 score = scores[submissions[i].user];
+      address user = scores[submissions[i].user];
+
+      if (score != 0){
+        scores[submissions[i].user] = 0;
+        tokenContract.distribute(user, score, totalScore);
+      }
+    }
   }
 }
