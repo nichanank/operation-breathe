@@ -96,7 +96,7 @@ contract MyContract is ChainlinkClient, Ownable {
     });
 
     // store new submission
-    submissions[totalSubmissions] = submission;
+    submissions.push(submission);
 
     totalSubmissions = totalSubmissions + 1;
 
