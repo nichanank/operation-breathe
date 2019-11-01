@@ -1,6 +1,16 @@
-# Wildlife Alliance
+# <A New Title>
 
 A project to unite Earth's citizens to create a more sustainable planet.
+
+## Description
+Individuals, groups, orgs will help in preserving environment by reducing air pollution. Govt will fund NGO to oversee the process and NGO will then reward the individuals who helped in the process.
+* Govt will fund the Reserve Contract(owned by NGO) expecting them to achieve a milestone such as lowering the AQI value to let's say 100. The Reserve Contract will calculate the amount of tokens that will be minted as reward for the milestone.
+* Individuals will help in the cause daily by doing activities that helps in reducing air pollution. They will upload their picture to ipfs and will call the NGO Contract with the hash. Their claim to help the cause will go to pending state and then NGO owners/organisers will verify the picture and reward a point to the individual.
+* NGO would periodically call oracle to get AQI and check if the target is met or not. Besides this periodic call any individual would also be able to call the method of checking the AQI value give that they pay 1 LINK for that.
+* When AQI value is below the target, automatically the NGO contract will call the Reserve Contract to distribute/mint tokens to individuals who helped achieving that goal. The amount each individual get will be proportional to their score.
+* Individuals will be able to convert their tokens anytime to ETH(real money).
+* Now after achieving the target the govt can fund the contract again for Round 2 with new target value and then more tokens will be minted for next set of contributors.
+* The reason for using continuous token here is because early contributors will earn more profit as the project gets more funding. This creates an incentive to help early. Other than govt, any individual can donate ETH to the project but he will not be able to set the target value.
 
 ## Development
 
@@ -96,4 +106,9 @@ Truffle v5.0.25 (core: 5.0.25)
 Node v10.15.1
 ```
 
-### Todos
+
+## Challenges and Future Plans
+* Couldn't find APIs for water pollution as it is not automated unlike air and requires manual testing so as of now this is specific for projects related to air pollution.
+* Our model rewards people when a certain target is achieved, we want to make it more flexible and reward people instantly for any contribution they made but that requires figuring out how to calculate the impact of their effort. This is not easy to do now so that's why we are just rewarding 1 point for any task that helps to achieving target.
+* Adding multiple mode of payments like DAI and other ERC20 tokens instead of just ETH.
+* We will use chainlink in future to obtain animals, species of a location to prepare NFTs of animals, plants(which were saved) and distribute them to contributors.
