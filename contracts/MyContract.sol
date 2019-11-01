@@ -2,7 +2,7 @@ pragma solidity 0.4.24;
 
 import "chainlink/contracts/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-
+import "./reserve/ContinuousToken.sol";
 /**
  * @title MyContract is an example contract which requests data from
  * the Chainlink network
@@ -14,9 +14,9 @@ contract MyContract is ChainlinkClient, Ownable {
   uint256 public data;
   uint256 totalSubmissions;
   uint256 totalScore;
-  bool redeemPhase;
+  uint256 target;
 
-  address[] users;
+  address[] public users;
 
   ContinuousToken tokenContract;
 
@@ -46,7 +46,6 @@ contract MyContract is ChainlinkClient, Ownable {
   event Data(uint256 data, bytes32 requestId);
   event ClaimSubmitted(uint256 indexed submissionId, address indexed user, Multihash indexed ipfsHash, Status status);
   event ClaimReviewed(uint256 indexed submissionId, address indexed user, Multihash indexed ipfsHash, Status status);
-  event RedeemPhase(bool on);
    
   /**
    * @notice Deploy the contract with a specified address for the LINK
@@ -58,7 +57,7 @@ contract MyContract is ChainlinkClient, Ownable {
     constructor(address _link, address _token) public { // delete this line and uncomment the above when continuous token is ready
     totalSubmissions = 0;
     totalScore = 0;
-    redeemPhase = false;
+    
     if (_link == address(0)) {
       setPublicChainlinkToken();
     } else {
@@ -104,16 +103,6 @@ contract MyContract is ChainlinkClient, Ownable {
     return totalSubmissions;
   }
 
-  function redeem() public {
-    require(redeemPhase == true, "You cannot redeem now");
-    if (scores[msg.sender] != 0){
-      uint256 amount = scores[msg.sender] * tokenContract.totalSupply();
-      amount = amount / totalScore;
-      // call on tokenContract to transfer that much tokens like tokenContract.transfer(msg.sender, amount);
-      scores[msg.sender] = 0;
-    }
-  }
-
   /**
    * @notice The fulfill method from requests created by this contract
    * @dev The recordChainlinkFulfillment protects this function from being called
@@ -126,11 +115,13 @@ contract MyContract is ChainlinkClient, Ownable {
     recordChainlinkFulfillment(_requestId)
   {
     data = _data;
-    if (data > 20){
+    target = tokenContract.getTarget();
+    if (data <= target){
       _targetAchieved();
     }
     emit Data(data, _requestId);
   }
+
 
   function reviewSubmission(uint256 submissionId, bool _accepted) public onlyOwner {
     require(submissions[submissionId].status == Status.Pending, "Claim has already been taken care of");
@@ -216,8 +207,6 @@ contract MyContract is ChainlinkClient, Ownable {
 
   function _targetAchieved() internal {
     // transfer tokens to user
-    redeemPhase = true;
-    emit RedeemPhase(true);
 
     for (uint256 i = 0; i < totalSubmissions; i++){
       uint256 score = scores[submissions[i].user];
@@ -231,7 +220,7 @@ contract MyContract is ChainlinkClient, Ownable {
   }
 }
 
-contract ContinuousToken {
-  function distribute(address user, uint score, uint totalScore) public returns (uint256);
-  function totalSupply() public view returns (uint256);
-}
+// contract ContinuousToken {
+//   function distribute(address user, uint score, uint totalScore) public returns (uint256);
+//   function totalSupply() public view returns (uint256);
+// }
