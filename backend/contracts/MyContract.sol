@@ -2,7 +2,6 @@ pragma solidity 0.4.24;
 
 import "chainlink/contracts/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./reserve/ContinuousToken.sol";
 /**
  * @title MyContract is an example contract which requests data from
  * the Chainlink network
@@ -220,7 +219,8 @@ contract MyContract is ChainlinkClient, Ownable {
   }
 }
 
-// contract ContinuousToken {
-//   function distribute(address user, uint score, uint totalScore) public returns (uint256);
-//   function totalSupply() public view returns (uint256);
-// }
+contract ContinuousToken {
+  function distribute(address user, uint score, uint totalScore) public returns (uint256);
+  function totalSupply() public view returns (uint256);
+  function getTarget() public view returns (uint256);
+}

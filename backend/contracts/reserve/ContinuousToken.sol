@@ -6,9 +6,9 @@ import "./GoodReserve.sol";
 contract ContinuousToken is GoodReserve {
     uint256 internal reserve;
     uint256 internal tokens;
-    addresss public govt;
+    address public govt;
     uint256 public target;
-    bool public redeem = false; // Status of project, target set and not met yet
+    bool public redeem = true; // Status of project, false = target set and not met yet
 
     constructor(
         string _name,
@@ -25,22 +25,22 @@ contract ContinuousToken is GoodReserve {
     function () public payable { mint(); }
 
     
-    function getTarget() public view {
+    function getTarget() public view returns (uint256) {
         return target;
     }
 
-    function getGovtAddr() public view {
+    function getGovtAddr() public view returns (address){
         return govt;
     }
 
     function setTarget(uint256 _target) public payable {
         require(msg.sender == govt, "Only govt can set target");
         require(redeem == true, "Target value already set");
-        redeem = false;
-        target = _target;
         uint purchaseAmount = msg.value;
         tokens = _continuousMint(purchaseAmount);
         reserve = reserve.add(purchaseAmount);
+        redeem = false;
+        target = _target;
     }
 
     // Will only be called by govt so a modifier needs to be put
@@ -61,10 +61,10 @@ contract ContinuousToken is GoodReserve {
     }
 
     function distribute(address user, uint256 score, uint256 total) public returns (uint256) {
-        redeem = true;
         uint256 amount = score * tokens;
         amount = amount / total;
         _mint(user, amount);
+        redeem = true;
         return amount;
     }
 }
